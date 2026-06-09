@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: library_postgres
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    container_name: library_redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  web:
+    build: .
+    container_name: library_web
+    restart: always
+    # Команда сначала ждет запуска БД (необязательно, но полезно), применяет миграции и стартует сервер
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      SECRET_KEY: ${DJANGO_SECRET_KEY}
+      DEBUG: ${DJANGO_DEBUG}
+      ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      REDIS_URL: ${REDIS_URL}
+    depends_on:
+      - db
+      - redis
+
+volumes:
+  postgres_data:
