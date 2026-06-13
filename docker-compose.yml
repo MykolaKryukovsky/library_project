@@ -23,7 +23,7 @@ services:
     build: .
     container_name: library_web
     restart: always
-    command: python manage.py runserver 0.0.0.0:8000
+    command: daphne -b 0.0.0.0 -p 8000 library_project.asgi:application
     tty: true
     stdin_open: true
     volumes:
@@ -40,6 +40,7 @@ services:
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
       REDIS_URL: ${REDIS_URL}
+      REDIS_HOST: redis
     depends_on:
       - db
       - redis

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Тест функций Книжной Библиотеки</title>
+    <style>
+        body { font-family: sans-serif; margin: 30px; background: #f4f4f9; }
+        .box { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .btn { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .btn:hover { background: #0056b3; }
+        #chat-log { width: 100%; height: 150px; border: 1px solid #ccc; background: #fafafa; overflow-y: scroll; padding: 10px; margin-bottom: 10px; }
+        .notification { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px; border-radius: 4px; margin-top: 10px; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="box">
+        <h3>📚 Книжная онлайн-библиотека</h3>
+        <p>Сейчас на сайте (онлайн): <strong id="online-counter">0</strong> чел.</p>
+    </div>
+
+    <div class="box">
+        <h3>📢 Глобальные Пуш-Уведомления</h3>
+        <button class="btn" onclick="sendPush()">Отправить пуш всем пользователям</button>
+        <div id="push-box" class="notification"></div>
+    </div>
+
+    <div class="box">
+        <h3>💬 Книжный чат (Только для зарегистрированных)</h3>
+        <div id="chat-log"></div>
+        <input type="text" id="chat-message-input" placeholder="Введите ваше сообщение..." style="width: 70%; padding: 10px;">
+        <button class="btn" id="chat-message-submit" onclick="sendChatMessage()">Отправить</button>
+    </div>
+
+    <script>
+        const wsProtocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+        const globalSocket = new WebSocket(wsProtocol + window.location.host + '/ws/global/');
+
+        globalSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+
+            if (data.type === 'online_count') {
+                document.getElementById('online-counter').innerText = data.count;
+            }
+
+            if (data.type === 'push_notification') {
+                const pushBox = document.getElementById('push-box');
+                pushBox.innerText = data.message;
+                pushBox.style.display = 'block';
+                setTimeout(() => { pushBox.style.style.display = 'none'; }, 5000);
+            }
+
+            if (data.type === 'chat_message') {
+                const chatLog = document.getElementById('chat-log');
+                chatLog.innerHTML += `<p><strong>${data.username}:</strong> ${data.message}</p>`;
+                chatLog.scrollTop = chatLog.scrollHeight; // Прокрутка вниз
+            }
+
+            if (data.type === 'error') {
+                alert("Ошибка: " + data.message);
+            }
+        };
+
+        globalSocket.onclose = function(e) {
+            console.error('Соединение закрылось неожиданно. Перезагрузите страницу.');
+        };
+
+        function sendPush() {
+            globalSocket.send(JSON.stringify({
+                'action': 'send_push',
+                'message': '🔥 Администратор добавил новую книгу в каталог!'
+            }));
+        }
+
+        function sendChatMessage() {
+            const inputDom = document.getElementById('chat-message-input');
+            const message = inputDom.value;
+            if(message.trim() === "") return;
+
+            globalSocket.send(JSON.stringify({
+                'action': 'send_chat_message',
+                'message': message
+            }));
+            inputDom.value = '';
+        }
+    </script>
+</body>
+</html>
