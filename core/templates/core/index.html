@@ -1,35 +1,218 @@
 <!DOCTYPE html>
-<html lang="ru">
+
+{% load static %}
+
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Тест функций Книжной Библиотеки</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Library</title>
+
+    <link href="https://jsdelivr.net" rel="stylesheet">
+    <link href="https://googleapis.com" rel="stylesheet">
+
     <style>
-        body { font-family: sans-serif; margin: 30px; background: #f4f4f9; }
-        .box { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .btn { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        .btn:hover { background: #0056b3; }
-        #chat-log { width: 100%; height: 150px; border: 1px solid #ccc; background: #fafafa; overflow-y: scroll; padding: 10px; margin-bottom: 10px; }
-        .notification { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px; border-radius: 4px; margin-top: 10px; display: none; }
+        :root {
+            --bg-gradient: linear-gradient(135deg, #100626 0%, #1d0745 50%, #31065a 100%);
+            --neon-blue: #00f2fe;
+            --box-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: #ffffff;
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 0;
+        }
+
+        /* --- ГОЛОВНИЙ БАНЕР (HERO BANNER) --- */
+        .hero-banner {
+            max-width: 1000px;
+            height: 560px;
+            margin: 0 auto 40px auto;
+            border-radius: 24px;
+            position: relative;
+
+            /* ПІДКЛЮЧЕННЯ ВАШОЇ КАРТИНКИ ЯК ФОНУ */
+            background: url('{% static "core/images/hero.png" %}') no-repeat center center;
+            background-size: cover;
+
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        /* Текстовий блок поверх картинки (Тільки права частина) */
+        .hero-content {
+            position: absolute;
+            top: 50%;
+            right: 5%;
+            transform: translateY(-50%);
+            width: 40%;
+            text-align: right;
+            padding-right: 20px;
+        }
+
+        .library-title {
+            font-weight: 800;
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .library-text {
+            font-size: 1.1rem;
+            font-weight: 400;
+            line-height: 1.6;
+            color: #e0d5ff;
+            margin-bottom: 35px;
+        }
+
+        /* Професійна кнопка градієнтом */
+        .btn-learn-more {
+            background: linear-gradient(90deg, #00f2fe 0%, #4facfe 100%);
+            border: none;
+            color: #0d0321;
+            font-weight: 700;
+            padding: 14px 45px;
+            border-radius: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn-learn-more:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 242, 254, 0.6);
+            color: #0d0321;
+        }
+
+        /* --- НИЖНЯ ПАНЕЛЬ (ВАШ ЧАТ) --- */
+        .box {
+            background: var(--box-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+        }
+
+        .box h3 {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .btn-modern {
+            background: linear-gradient(90deg, #00f2fe 0%, #4facfe 100%);
+            border: none;
+            color: #0d0321;
+            font-weight: 700;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        #chat-log {
+            width: 100%;
+            height: 150px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            overflow-y: auto;
+            padding: 15px;
+            margin-bottom: 15px;
+            color: #e0d5ff;
+        }
+
+        .chat-input {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 30px;
+            padding: 12px 20px;
+        }
+
+        .chat-input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--neon-blue);
+            outline: none;
+            color: white;
+        }
+
+        .notification {
+            background: rgba(0, 242, 254, 0.15);
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        #online-counter { color: var(--neon-blue); }
+
+        /* Адаптивність для екранів менше 1000px */
+        @media (max-width: 991.98px) {
+            .hero-banner { height: auto; padding: 40px 20px; background-size: 150%; }
+            .hero-content { position: static; transform: none; width: 100%; text-align: center; margin-top: 200px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="box">
-        <h3>📚 Книжная онлайн-библиотека</h3>
-        <p>Сейчас на сайте (онлайн): <strong id="online-counter">0</strong> чел.</p>
-    </div>
+    <div class="container">
 
-    <div class="box">
-        <h3>📢 Глобальные Пуш-Уведомления</h3>
-        <button class="btn" onclick="sendPush()">Отправить пуш всем пользователям</button>
-        <div id="push-box" class="notification"></div>
-    </div>
+        <div class="hero-banner">
+            <div class="hero-content">
+                <h1 class="library-title">ONLINE LIBRARY</h1>
+                <p class="library-text">
+                    Open Library — це відкритий каталог книг, який можна редагувати.
+                    Ми прагнемо створити веб-сторінку для кожної коли-небудь виданої книги.
+                </p>
+                <a href="/books/" class="btn-learn-more">Learn More</a>
+            </div>
+        </div>
 
-    <div class="box">
-        <h3>💬 Книжный чат (Только для зарегистрированных)</h3>
-        <div id="chat-log"></div>
-        <input type="text" id="chat-message-input" placeholder="Введите ваше сообщение..." style="width: 70%; padding: 10px;">
-        <button class="btn" id="chat-message-submit" onclick="sendChatMessage()">Отправить</button>
+        <section class="dashboard-section">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="box">
+                        <h3>📚 Бібліотека</h3>
+                        <p class="m-0">Зараз на сайті (онлайн): <strong id="online-counter">0</strong> чол.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="box">
+                        <h3>📢 Глобальні Пуш-Сповіщення</h3>
+                        <button class="btn-modern" onclick="sendPush()">Надіслати пуш усім користувачам</button>
+                        <div id="push-box" class="notification"></div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="box">
+                        <h3>💬 Книжковий чат (Тільки для зареєстрованих)</h3>
+                        <div id="chat-log"></div>
+                        <div class="input-group">
+                            <input type="text" id="chat-message-input" class="form-control chat-input" placeholder="Введіть ваше повідомлення...">
+                            <button class="btn-modern ms-2" id="chat-message-submit" onclick="sendChatMessage()">Надіслати</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </div>
 
     <script>
@@ -47,35 +230,35 @@
                 const pushBox = document.getElementById('push-box');
                 pushBox.innerText = data.message;
                 pushBox.style.display = 'block';
-                setTimeout(() => { pushBox.style.style.display = 'none'; }, 5000);
+                setTimeout(() => { pushBox.style.display = 'none'; }, 5000);
             }
 
             if (data.type === 'chat_message') {
                 const chatLog = document.getElementById('chat-log');
                 chatLog.innerHTML += `<p><strong>${data.username}:</strong> ${data.message}</p>`;
-                chatLog.scrollTop = chatLog.scrollHeight; // Прокрутка вниз
+                chatLog.scrollTop = chatLog.scrollHeight;
             }
 
             if (data.type === 'error') {
-                alert("Ошибка: " + data.message);
+                alert("Помилка: " + data.message);
             }
         };
 
         globalSocket.onclose = function(e) {
-            console.error('Соединение закрылось неожиданно. Перезагрузите страницу.');
+            console.error('З\'єднання закрилося несподівано. Перезавантажте сторінку.');
         };
 
         function sendPush() {
             globalSocket.send(JSON.stringify({
                 'action': 'send_push',
-                'message': '🔥 Администратор добавил новую книгу в каталог!'
+                'message': '🔥 Адміністратор додав нову книгу до каталогу!'
             }));
         }
 
         function sendChatMessage() {
             const inputDom = document.getElementById('chat-message-input');
             const message = inputDom.value;
-            if(message.trim() === "") return;
+            if (message.trim() === "") return;
 
             globalSocket.send(JSON.stringify({
                 'action': 'send_chat_message',
