@@ -12,7 +12,7 @@
     <link href="https://googleapis.com" rel="stylesheet">
 
     <style>
-        :root {
+         :root {
             --bg-gradient: linear-gradient(135deg, #100626 0%, #1d0745 50%, #31065a 100%);
             --neon-blue: #00f2fe;
             --box-bg: rgba(255, 255, 255, 0.05);
@@ -43,55 +43,57 @@
             overflow: hidden;
         }
 
-        /* Текстовий блок поверх картинки (Тільки права частина) */
+        /* Текстовий блок поверх картинки (Ідеальне вирівнювання під макет) */
         .hero-content {
             position: absolute;
-            top: 50%;
-            right: 5%;
+            top: 55%; /* Змістили трохи нижче, щоб потрапити в площину */
+            right: 6%; /* Відступ від правого краю */
             transform: translateY(-50%);
-            width: 40%;
-            text-align: right;
-            padding-right: 20px;
+            width: 32%; /* Зменшили ширину блоку, щоб текст переносився як на зразку */
+            text-align: center; /* Центрування тексту всередині свого блоку */
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Центрування кнопки по центру тексту */
         }
 
         .library-title {
             font-weight: 800;
-            font-size: 2.5rem;
-            letter-spacing: 2px;
+            font-size: 1.8rem; /* Зменшили розмір, щоб відповідати оригіналу */
+            letter-spacing: 1px;
             text-transform: uppercase;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             color: #ffffff;
+            width: 100%;
         }
 
         .library-text {
-            font-size: 1.1rem;
+            font-size: 0.95rem; /* Зменшили розмір шрифту */
             font-weight: 400;
-            line-height: 1.6;
+            line-height: 1.5;
             color: #e0d5ff;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
         }
 
-        /* Професійна кнопка градієнтом */
+        /* Кнопка в стилі оригіналу (ідеально круглі краї) */
         .btn-learn-more {
-            background: linear-gradient(90deg, #00f2fe 0%, #4facfe 100%);
+            background: linear-gradient(90deg, #00f2fe 0%, #c87dfa 100%); /* Плавний градієнт до фіолетового, як на зразку */
             border: none;
             color: #0d0321;
             font-weight: 700;
-            padding: 14px 45px;
-            border-radius: 30px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-size: 0.9rem;
+            padding: 10px 38px; /* Зменшені падінги */
+            border-radius: 25px; /* Більш округлі краї */
+            text-transform: none; /* Прибрали CapsLock (на зразку написано "Learn More") */
+            letter-spacing: 0.5px;
+            font-size: 0.95rem;
             text-decoration: none;
             display: inline-block;
-            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4);
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
             transition: all 0.3s ease;
         }
 
         .btn-learn-more:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 242, 254, 0.6);
-            color: #0d0321;
+            box-shadow: 0 8px 25px rgba(0, 242, 254, 0.5);
         }
 
         /* --- НИЖНЯ ПАНЕЛЬ (ВАШ ЧАТ) --- */
